@@ -45,6 +45,22 @@ async function accountsTest() {
   );
 }
 
+async function utilsTest() {
+  const wei = web3.utils.toWei("1");
+  console.log("🚀 ~ file: web3_tutorial.js ~ line 50 ~ utilsTest ~ wei", wei);
+
+  const unit = "ether";
+  const toUnit = web3.utils.fromWei("100000000000000", unit);
+  console.log(
+    "🚀 ~ file: web3_tutorial.js ~ line 54 ~ utilsTest ~ toUnit",
+    toUnit
+  );
+
+  // to calculate keccak-256, like in solidity
+  const hash = web3.utils.soliditySha3("MINTER_ROLE");
+  console.log("🚀 ~ file: web3_tutorial.js ~ line 61 ~ utilsTest ~ hash", hash);
+}
+
 async function balanceTest() {
   let balance = await web3.eth.getBalance(
     "0xe81db2B45cf9C1A93a32A29c5bBC177B028Bfa6e"
@@ -98,6 +114,17 @@ async function contractReadTest() {
   );
 }
 
+/**
+ *
+ * BASICS END
+ *
+ */
+
+/**
+ *
+ * INTERMEDIATE START
+ *
+ */
 async function contractWriteTest() {
   // Create the Contract Instance
   const TokenInstance = new web3.eth.Contract(Token.abi, Token.address);
@@ -107,6 +134,13 @@ async function contractWriteTest() {
   web3.eth.accounts.wallet.add(
     "caa856cf86bbedc3e9a0be54448a4e3a962bd6fb365f7ca1eb7f61ef0f71741d"
   );
+
+  web3.eth.accounts.wallet.add(
+    "7bb48d87508301e97715ab319865b0e2d7c9797b3456ee54cb1dd581b4e1d014"
+  );
+
+  // console.log(web3.eth.accounts.wallet[0]);
+  // console.log(web3.eth.accounts.wallet[1]);
 
   // Estimate the Gas that will be used to run the function
   const estimatedGas = await TokenInstance.methods
@@ -135,4 +169,5 @@ async function contractWriteTest() {
 // accountsTest();
 // balanceTest();
 // contractReadTest();
-contractWriteTest();
+// contractWriteTest();
+// utilsTest();
