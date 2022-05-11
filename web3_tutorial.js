@@ -1,9 +1,9 @@
 // What is Web3 ?
-// - It is a javascript library which helps us connect with the ethereum node.
+// - It is a javascript library which helps us connect with the blockchain.
 // - An ethereum node is any device which is connected to ethereum network, validates transactions and stores data related to the transactions.
 
 // Why do we need Web3 ?
-// - It acts as an API between our Front-end or backend app and the ethereum ecosystem.
+// - It acts as an API between our Front-end or backend app and the blockchain ecosystem.
 // - It provides a set of modules which helps us in making transactions, interacting with the smart contracts, reading data from smart contract's events, serializing transactions, conversion of units and much more.
 
 // What is a provider ?
@@ -31,7 +31,7 @@ async function accountsTest() {
   // will return empty array in case the provider is an RPC
   // endpoint like infura or alchemy
 
-  // In case of Metamask it gives the very first account that gets connected.
+  // In case of Metamask the function below gives the very first account that gets connected.
   // let data = await web3.eth.getAccounts();
   // console.log(data);
 
@@ -41,16 +41,8 @@ async function accountsTest() {
   // Solution: for when provider is not metamask
   // for example when using web3 on the backend
   web3.eth.accounts.wallet.add(
-    "0cb9060f5b50db8f7a0e676e9b7382f14400a19af64e36e812752f1ad9c43f42"
+    "caa856cf86bbedc3e9a0be54448a4e3a962bd6fb365f7ca1eb7f61ef0f71741d"
   );
-
-  let signer = web3.eth.accounts.wallet[0];
-  console.log(
-    "🚀 ~ file: web3_tutorial.js ~ line 45 ~ accountsTest ~ signer",
-    signer
-  );
-
-  // console.log(web3.eth.accounts.wallet.length);
 }
 
 async function balanceTest() {
@@ -61,7 +53,11 @@ async function balanceTest() {
   console.log("balance (ethers): ", web3.utils.fromWei(balance, "ether"));
 }
 
-async function contractTest() {
+async function contractReadTest() {
+  // Creating the instance of the contract
+  // We need two things:
+  // 1. Contract's ABI
+  // 2. Contract's Address
   const TokenInstance = new web3.eth.Contract(Token.abi, Token.address);
 
   console.log("Methods that can be called: ", TokenInstance.methods);
@@ -102,6 +98,41 @@ async function contractTest() {
   );
 }
 
+async function contractWriteTest() {
+  // Create the Contract Instance
+  const TokenInstance = new web3.eth.Contract(Token.abi, Token.address);
+
+  // Add private key to the wallet instance
+  // NOTE: No need for this on the frontend, because we will already get the Signer using the MetaMask.
+  web3.eth.accounts.wallet.add(
+    "caa856cf86bbedc3e9a0be54448a4e3a962bd6fb365f7ca1eb7f61ef0f71741d"
+  );
+
+  // Estimate the Gas that will be used to run the function
+  const estimatedGas = await TokenInstance.methods
+    .transfer(
+      "0x2E3c462e0884855650fDd8d44EA8fE7C097BaF9C",
+      web3.utils.toWei("1")
+    )
+    .estimateGas({ from: "0xe81db2B45cf9C1A93a32A29c5bBC177B028Bfa6e" });
+
+  // Calling the transfer function
+  const data = await TokenInstance.methods
+    .transfer(
+      "0x2E3c462e0884855650fDd8d44EA8fE7C097BaF9C",
+      web3.utils.toWei("1")
+    )
+    .send({
+      from: "0xe81db2B45cf9C1A93a32A29c5bBC177B028Bfa6e",
+      gas: estimatedGas,
+    });
+  console.log(
+    "🚀 ~ file: web3_tutorial.js ~ line 110 ~ contractWriteTest ~ data",
+    data
+  );
+}
+
 // accountsTest();
 // balanceTest();
-contractTest();
+// contractReadTest();
+contractWriteTest();
