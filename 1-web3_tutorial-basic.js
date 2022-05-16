@@ -12,7 +12,7 @@
 
 // Creating a Web3 class's web3 instance
 const Web3 = require("Web3");
-const Token = require("./contractinfo");
+const { Token } = require("./contractinfo");
 
 // For Connecting with Metamask
 // if (window.ethereum) {
@@ -114,17 +114,6 @@ async function contractReadTest() {
   );
 }
 
-/**
- *
- * BASICS END
- *
- */
-
-/**
- *
- * INTERMEDIATE START
- *
- */
 async function contractWriteTest() {
   // Create the Contract Instance
   const TokenInstance = new web3.eth.Contract(Token.abi, Token.address);

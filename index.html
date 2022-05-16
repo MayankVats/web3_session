@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web3js | Tutorial</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.3/web3.min.js"
+      integrity="sha512-Ws+qbaGHSFw2Zc1e7XRpvW+kySrhmPLFYTyQ95mxAkss0sshj6ObdNP3HDWcwTs8zBJ60KpynKZywk0R8tG1GA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        Account:
+        <span id="metamask-btn"></span>
+      </div>
+
+      <input type="text" id="amount" placeholder="Enter Amount ..." />
+      <input type="text" id="address" placeholder="Enter Address ..." />
+      <button id="send-btn">send</button>
+    </div>
+
+    <script>
+      const metamaskBtn = document.querySelector("#metamask-btn");
+      const sendBtn = document.querySelector("#send-btn");
+      const amountInput = document.querySelector("#amount");
+      const addressInput = document.querySelector("#address");
+
+      let from;
+      async function init() {
+        if (window.ethereum) {
+          window.web3 = new Web3(window.ethereum);
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+
+          let accounts = await web3.eth.getAccounts();
+          from = accounts[0];
+
+          metamaskBtn.innerHTML = `${accounts[0].slice(
+            0,
+            10
+          )}...${accounts[0].slice(-8)}`;
+
+          window.ethereum.on("accountsChanged", (accounts) => {
+            metamaskBtn.innerHTML = `${accounts[0].slice(
+              0,
+              10
+            )}...${accounts[0].slice(-8)}`;
+            from = accounts[0];
+          });
+        }
+
+        sendBtn.addEventListener("click", () => {
+          console.log(String(amountInput.value));
+          console.log(addressInput.value);
+
+          sendNativeCurrency(from, addressInput.value, amountInput.value);
+        });
+      }
+
+      async function sendNativeCurrency(from, to, amount) {
+        const gasPrice = await web3.eth.getGasPrice();
+        const nonce = await web3.eth.getTransactionCount(from);
+
+        const txObject = {
+          nonce,
+          from,
+          gasPrice,
+          gas: "21000",
+          to,
+          value: web3.utils.toWei(amount.toString()),
+          data: "",
+        };
+        console.log(
+          "\n\n🚀 ~ file: 2-web3_tutorial-adv.js ~ line 79 ~ sendNativeCurrency ~ txObject",
+          txObject
+        );
+
+        // const signedTx = await web3.eth.accounts.signTransaction(
+        //   txObject,
+        // );
+
+        const receipt = await web3.eth.sendTransaction(txObject);
+        console.log(
+          "\n\n🚀 ~ file: 2-web3_tutorial-adv.js ~ line 106 ~ sendNativeCurrency ~ receipt",
+          receipt
+        );
+      }
+
+      init();
+    </script>
+  </body>
+</html>
